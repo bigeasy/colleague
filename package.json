@@ -1,0 +1,52 @@
+{
+    "name":                 "colleague",
+    "version":              "0.2.3",
+    "description":
+
+      "Colleague object used by the Compasssion atomic log framework.",
+
+    "keywords":
+    [
+                            "paxos", "database", "database", "network", "consensus",
+                            "atomic", "broadcast", "multi-paxos", "queue",
+                            "fifo"
+    ],
+    "author":               "Alan Gutierrez <alan@prettyrobots.com>",
+    "homepage":             "https://github.com/bigeasy/colleague",
+    "bugs":                 "https://github.com/bigeasy/colleague/issues",
+    "license":              "MIT",
+    "repository":
+    {
+                            "type": "git",
+                            "url": "http://github.com/bigeasy/colleague.git"
+    },
+    "dependencies":
+    {
+                            "abend":                        "1.0.x",
+                            "arguable":                     "4.3.x",
+                            "bintrees":                     "1.0.1",
+                            "byline":                       "5.0.0",
+                            "cadence":                      "1.0.x",
+                            "cliffhanger":                  "1.2.x",
+                            "delta":                        "1.1.x",
+                            "kibitz":                       "0.3.x",
+                            "magazine":                     "1.0.x",
+                            "operation":                    "1.2.x",
+                            "prolific.logger":              "2.0.x",
+                            "prolific.shuttle":             "7.0.x",
+                            "reactor":                      "2.3.x",
+                            "vestibule":                    "1.4.x",
+                            "vizsla":                       "2.0.x",
+                            "ws":                           "1.1.1"
+    },
+    "devDependencies":
+    {
+                            "proof":                        "1.2.x",
+                            "vizsla":                       "2.0.x"
+    },
+    "main":                 "colleague",
+    "scripts":
+    {
+                            "test": "proof platform win32 && proof test */*.t.js || t/test"
+    }
+}
