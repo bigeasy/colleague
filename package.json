@@ -22,28 +22,16 @@
     },
     "dependencies":
     {
-                            "abend":                        "1.0.x",
-                            "arguable":                     "4.3.x",
-                            "bintrees":                     "1.0.1",
-                            "byline":                       "5.0.0",
                             "cadence":                      "1.0.x",
-                            "cliffhanger":                  "1.2.x",
+                            "conduit":                      "0.0.4",
                             "delta":                        "1.1.x",
-                            "happenstance":                 "2.7.x",
-                            "kibitz":                       "0.3.x",
-                            "magazine":                     "1.0.x",
-                            "operation":                    "1.2.x",
-                            "prolific.logger":              "2.0.x",
-                            "prolific.shuttle":             "7.0.x",
-                            "reactor":                      "2.3.x",
-                            "vestibule":                    "1.4.x",
-                            "vizsla":                       "2.0.x",
-                            "ws":                           "1.1.1"
+                            "nop":                          "1.0.0",
+                            "nascent.coalesce":             "0.0.0"
     },
     "devDependencies":
     {
                             "proof":                        "1.2.x",
-                            "vizsla":                       "2.0.x"
+                            "vestibule":                    "1.6.0"
     },
     "main":                 "colleague",
     "scripts":
