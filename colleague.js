@@ -1,3 +1,4 @@
+var abend = require('abend')
 var cadence = require('cadence')
 var getPipe = require('./pipe')(require('net'))
 var Multiplexer = require('conduit/multiplexer')
@@ -13,6 +14,12 @@ function Colleague (process) {
     // TODO Should be underbarred, right? Rename to Requester.
     this._spigot = new Spigot.Generator
     this.spigot = new Spigot.Generator
+}
+
+Colleague.connect = function (process) {
+    var colleague = new Colleague(process)
+    colleague.connect(abend)
+    return colleague
 }
 
 Colleague.prototype.connect = cadence(function (async) {
