@@ -16,15 +16,11 @@ function prove (async, assert) {
     })
     var multiplexer
     async(function () {
-        async(function () {
-            var wait = async()
-            multiplexer = new Multiplexer({
-                connect: cadence(function (async, socket) {
-                    wait(null, socket)
-                })
-            }, output, input)
-            multiplexer.listen(abend)
-        })
+        var wait = async()
+        multiplexer = new Multiplexer(output, input, cadence(function (async, socket) {
+            wait(null, socket)
+        }))
+        multiplexer.listen(abend)
         colleague.connect(async())
     }, function (socket) {
         var responses = socket.spigot.requests.shifter()
@@ -38,7 +34,7 @@ function prove (async, assert) {
         }, function (message) {
             assert(message.body, { module: 'colleague', method: 'naturalize', body: null }, 'naturalize')
             colleague.close(async())
-            socket.spigot.enqueue(null, async())
+            socket.spigot.responses.enqueue(null, async())
         })
     })
 }

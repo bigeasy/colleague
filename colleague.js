@@ -5,15 +5,43 @@ var Multiplexer = require('conduit/multiplexer')
 var Spigot = require('conduit/spigot')
 var Basin = require('conduit/basin')
 var Responder = require('conduit/responder')
-var Prefixer = require('conduit/prefixer')
+var Requester = require('conduit/requester')
+
+function Program (colleague) {
+    this._colleague = colleague
+}
+
+Program.prototype.fromSpigot = function (envelope, callback) {
+    this._colleague._fromProgramSpigot(envelope, callback)
+}
+
+function Process (colleague) {
+    this._colleague = colleague
+}
+
+Process.prototype.fromSpigot = function (envelope, callback) {
+    this._colleague._fromProcessSpigot(envelope, callback)
+}
+
+Process.prototype.fromBasin = function (envelope, callback) {
+    this._colleague._fromProcessBasin(envelope, callback)
+}
+
+Process.prototype.request = function (value, callback) {
+    this._colleague._request(value, callback)
+}
 
 function Colleague (process) {
     var pipe = getPipe(process, 'COLLEAGUE_CHILD_FD')
-    this._multiplexer = new Multiplexer(null, pipe.input, pipe.output)
+    this._multiplexer = new Multiplexer(pipe.input, pipe.output)
     this._outOfBandNumber = 0
-    // TODO Should be underbarred, right? Rename to Requester.
-    this._spigot = new Spigot.Generator
-    this.spigot = new Spigot.Generator
+    this._spigot = new Spigot(new Process(this))
+    this._requester = new Requester('outOfBand')
+    this._spigot.emptyInto(this._requester.basin)
+    this._responder = new Responder(this, 'outOfBand')
+    this._basin = new Basin(new Process(this))
+    this._responder.spigot.emptyInto(this._basin)
+    this.spigot = new Spigot(new Program(this))
 }
 
 Colleague.connect = function (process) {
@@ -27,10 +55,22 @@ Colleague.prototype.connect = cadence(function (async) {
         this._multiplexer.connect(async())
     }, function (socket) {
         this._socket = socket
-        this._spigot.emptyInto(socket.basin)
-        socket.spigot.emptyInto(new Basin.Responder(new Responder(this, new Prefixer)))
+        this._requester.spigot.emptyInto(socket.basin)
+        socket.spigot.emptyInto(this._responder.basin)
     })
 })
+
+Colleague.prototype._fromProcessSpigot = function (envelope, callback) {
+    callback()
+}
+
+Colleague.prototype._fromProcessBasin = function (envelope, callback) {
+    this.spigot.requests.enqueue(envelope, callback)
+}
+
+Colleague.prototype._fromProgramSpigot = function (envelope, callback) {
+    callback()
+}
 
 // Responder interface for events sent by the consensus algorithm and other
 // colleagues.
@@ -65,7 +105,7 @@ Colleague.prototype._replay = cadence(function (async, envelope) {
 })
 
 Colleague.prototype.naturalized = function (callback) {
-    this._spigot.send({
+    this._spigot.requests.enqueue({
         module: 'colleague',
         method: 'naturalize',
         body: null
@@ -103,7 +143,12 @@ Colleague.prototype.record = cadence(function (async, record, callback) {
 Colleague.prototype.outOfBand = cadence(function (async, name, post) {
     var outOfBandNumber = this._outOfBandNumber++
     async(function () {
-        this._socket.request({ cookie: 'outOfBand', to: name, body: post }, async())
+        this._requester.request({
+            module: 'colleague',
+            method: 'outOfBand',
+            to: name,
+            body: post
+        }, async())
     }, function (response) {
         this._socket.enqueue({
             cookie: 'outOfBandReturn',
@@ -115,15 +160,15 @@ Colleague.prototype.outOfBand = cadence(function (async, name, post) {
 })
 
 Colleague.prototype.publish = function (envelope, callback) {
-    this._spigot.send({
+    this._spigot.requests.enqueue({
         module: 'colleague',
         method: 'publish',
         body: envelope
     }, callback)
 }
 
-Colleague.prototype.close = cadence(function (async) {
-    this._spigot.send(null, async())
-})
+Colleague.prototype.close = function (callback) {
+    this._spigot.requests.enqueue(null, callback)
+}
 
 module.exports = Colleague
