@@ -1,5 +1,6 @@
 var abend = require('abend')
 var cadence = require('cadence')
+var coalesce = require('nascent.coalesce')
 var getPipe = require('./pipe')(require('net'))
 var Multiplexer = require('conduit/multiplexer')
 var Spigot = require('conduit/spigot')
@@ -32,7 +33,7 @@ Process.prototype.request = function (value, callback) {
 }
 
 function Colleague (process) {
-    var pipe = getPipe(process, 'COLLEAGUE_CHILD_FD')
+    var pipe = getPipe(process, coalesce(process.env['COMPASSION_COLLEAGUE_FD'], 'stdin/stdout'))
     this._multiplexer = new Multiplexer(pipe.input, pipe.output)
     this._outOfBandNumber = 0
     this._spigot = new Spigot(new Process(this))
