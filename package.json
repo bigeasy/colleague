@@ -26,8 +26,8 @@
                             "cadence":                      "1.0.x",
                             "conduit":                      "0.0.21",
                             "delta":                        "1.1.x",
-                            "nop":                          "1.0.0",
-                            "nascent.coalesce":             "0.0.0"
+                            "nascent.coalesce":             "0.0.0",
+                            "nop":                          "1.0.0"
     },
     "devDependencies":
     {
