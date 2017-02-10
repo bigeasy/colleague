@@ -10,7 +10,7 @@ function prove (async, assert) {
     var Vestibule = require('vestibule')
     var Multiplexer = require('conduit/multiplexer')
     var colleague = new Colleague({
-        env: { 'COLLEAGUE_CHILD_FD': 'input/output' },
+        env: { 'COMPASSION_COLLEAGUE_FD': 'input/output' },
         input: input,
         output: output
     })
@@ -28,11 +28,11 @@ function prove (async, assert) {
             colleague.publish(1, async())
             responses.dequeue(async())
         }, function (message) {
-            assert(message.body, { module: 'colleague', method: 'publish', body: 1 }, 'publish')
+            assert(message, { module: 'colleague', method: 'publish', body: 1 }, 'publish')
             responses.dequeue(async())
             colleague.naturalized(async())
         }, function (message) {
-            assert(message.body, { module: 'colleague', method: 'naturalize', body: null }, 'naturalize')
+            assert(message, { module: 'colleague', method: 'naturalize', body: null }, 'naturalize')
             colleague.close(async())
             socket.spigot.responses.enqueue(null, async())
         })

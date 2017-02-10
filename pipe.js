@@ -4,7 +4,7 @@ var noop = require('nop')
 module.exports = function (net) {
     return function (process, handle) {
         if (/^\d+$/.test(handle)) {
-            var pipe = new net.Socket({ fd: pipe })
+            var pipe = new net.Socket({ fd: handle })
             return {
                 input: pipe,
                 output: pipe,

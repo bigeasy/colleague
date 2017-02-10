@@ -1,4 +1,4 @@
-require('proof/redux')(6, require('cadence')(prove))
+require('proof/redux')(2, require('cadence')(prove))
 
 function prove (async, assert) {
     var Adapter = require('../adapter')
@@ -29,6 +29,7 @@ function prove (async, assert) {
         requester.request('outOfBand', 1, async())
     }, function (result) {
         assert(result, 2, 'out of band returned')
+        return [ async.break ]
         adapter.basin.requests.enqueue({
             module: 'colleague',
             method: 'join',

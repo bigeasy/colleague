@@ -11,24 +11,17 @@ function prove (assert) {
         }
     }
     var openPipe = require('../pipe')(net), pipe
-    pipe = openPipe({
-        env: { PIPE: '3' }
-    }, 'PIPE')
+    pipe = openPipe({}, '3')
     pipe.destroy()
     var input = new stream.PassThrough
     var output = new stream.PassThrough
     pipe = openPipe({
-        env: { PIPE: 'input/output' },
         input: input,
         output: output
-    }, 'PIPE')
+    }, 'input/output')
     assert(input === pipe.input, 'input property')
     assert(output === pipe.output, 'output property')
     pipe.destroy()
-    pipe = openPipe({
-        env: { PIPE: '' },
-        input: input,
-        output: output
-    }, 'PIPE')
+    pipe = openPipe({}, '')
     assert(pipe, null, 'pipe not found')
 }
