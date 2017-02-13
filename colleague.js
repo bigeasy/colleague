@@ -25,6 +25,7 @@ Process.prototype.fromSpigot = function (envelope, callback) {
 }
 
 Process.prototype.fromBasin = function (envelope, callback) {
+    console.log(envelope)
     this._colleague._fromProcessBasin(envelope, callback)
 }
 
@@ -37,12 +38,17 @@ function Colleague (process) {
     this._multiplexer = new Multiplexer(pipe.input, pipe.output)
     this._outOfBandNumber = 0
     this._spigot = new Spigot(new Process(this))
-    this._requester = new Requester('outOfBand')
+    this._requester = new Requester('colleague')
     this._spigot.emptyInto(this._requester.basin)
-    this._responder = new Responder(this, 'outOfBand')
+    this._responder = new Responder(new Process(this), 'colleague')
     this._basin = new Basin(new Process(this))
     this._responder.spigot.emptyInto(this._basin)
-    this.spigot = new Spigot(new Program(this))
+    this._program = {
+        spigot: new Spigot(new Program(this))
+    }
+    this._requester.spigot.emptyInto(this._program.spigot)
+    this.spigot = this._requester.spigot
+    this.basin = new Basin(new Program(this))
 }
 
 Colleague.connect = function (process) {
@@ -52,11 +58,12 @@ Colleague.connect = function (process) {
 }
 
 Colleague.prototype.connect = cadence(function (async) {
+    this._multiplexer.listen(abend)
     async(function () {
         this._multiplexer.connect(async())
     }, function (socket) {
         this._socket = socket
-        this._requester.spigot.emptyInto(socket.basin)
+        this._spigot.emptyInto(socket.basin)
         socket.spigot.emptyInto(this._responder.basin)
     })
 })
@@ -72,6 +79,10 @@ Colleague.prototype._fromProcessBasin = function (envelope, callback) {
 Colleague.prototype._fromProgramSpigot = function (envelope, callback) {
     callback()
 }
+
+Colleague.prototype._request = cadence(function (async, request) {
+    this._requester.request('colleague', request, async())
+})
 
 // Responder interface for events sent by the consensus algorithm and other
 // colleagues.
