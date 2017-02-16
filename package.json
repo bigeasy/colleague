@@ -26,6 +26,7 @@
                             "cadence":                      "1.0.x",
                             "conduit":                      "0.0.26",
                             "delta":                        "1.2.x",
+                            "destructible":                 "0.0.2",
                             "nascent.coalesce":             "0.0.0",
                             "nop":                          "1.0.0"
     },
