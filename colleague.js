@@ -62,7 +62,7 @@ Colleague.prototype.connect = cadence(function (async, process) {
 })
 
 Colleague.prototype.destroy = function (callback) {
-    this._destructor.destroy
+    this._destructor.destroy()
 }
 
 module.exports = Colleague
