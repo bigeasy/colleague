@@ -32,8 +32,9 @@ Socket.prototype.fromBasin = function (envelope, callback) {
 }
 
 // TODO Rethink? Can't this be a bit more direct?
-function Colleague () {
+function Colleague (conference) {
     this._destructor = new Destructor
+    this._conference = conference
     this.spigot = new Spigot(new Program(this))
     this.basin = new Basin(new Program(this))
     this._spigot = new Spigot(new Socket(this))
@@ -45,7 +46,7 @@ var Terminator = require('destructible/terminator')
 
 Colleague.prototype.connect = cadence(function (async, process) {
     var pipe = getPipe(process, coalesce(process.env['COMPASSION_COLLEAGUE_FD'], 'stdin/stdout'))
-    var multiplexer = new Multiplexer(pipe.input, pipe.output)
+    var multiplexer = new Multiplexer(pipe.input, pipe.output, { object: conference, method: 'connect' })
     this._destructor.async(async, 'multiplexer')(function () {
         this._destructor.addDestructor('multiplexer', multiplexer.destroy.bind(multiplexer))
         multiplexer.listen(async())
@@ -56,13 +57,15 @@ Colleague.prototype.connect = cadence(function (async, process) {
             multiplexer.connect(async())
         }, function (socket) {
             this._socket = socket
-            this._spigot.emptyInto(socket.basin)
-            socket.spigot.emptyInto(this._basin)
+            this._conference.spigot.emptyInto(socket.basin)
+            socket.spigot.emptyInto(this._conference.basin)
         })
 })
 
 Colleague.prototype.destroy = function (callback) {
     this._destructor.destroy()
 }
+
+Colleague.prototype.
 
 module.exports = Colleague
