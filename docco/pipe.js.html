@@ -57,17 +57,17 @@
 <span class="hljs-keyword">var</span> noop = <span class="hljs-built_in">require</span>(<span class="hljs-string">'nop'</span>)
 
 <span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">net</span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">process, variable</span>) </span>{
-        <span class="hljs-keyword">var</span> pipe = coalesce(process.env[variable]), $
-        <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/^\d+$/</span>.test(pipe)) {
-            pipe = <span class="hljs-keyword">new</span> net.Socket({ <span class="hljs-attr">fd</span>: pipe })
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">process, handle</span>) </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/^\d+$/</span>.test(handle)) {
+            <span class="hljs-keyword">var</span> pipe = <span class="hljs-keyword">new</span> net.Socket({ <span class="hljs-attr">fd</span>: handle })
             <span class="hljs-keyword">return</span> {
                 <span class="hljs-attr">input</span>: pipe,
                 <span class="hljs-attr">output</span>: pipe,
                 <span class="hljs-attr">destroy</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ pipe.destroy() }
             }
         }
-        <span class="hljs-keyword">if</span> (($ = <span class="hljs-regexp">/^([^\/]+)\/(.*)$/</span>.exec(pipe)) != <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">var</span> $
+        <span class="hljs-keyword">if</span> (($ = <span class="hljs-regexp">/^([^\/]+)\/(.*)$/</span>.exec(handle)) != <span class="hljs-literal">null</span>) {
             <span class="hljs-keyword">return</span> {
                 <span class="hljs-attr">input</span>: process[$[<span class="hljs-number">1</span>]],
                 <span class="hljs-attr">output</span>: process[$[<span class="hljs-number">2</span>]],
@@ -76,9 +76,7 @@
         }
         <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
     }
-}
-
-</pre></div></div>
+}</pre></div></div>
 
         </li>
 

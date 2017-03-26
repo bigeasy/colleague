@@ -53,19 +53,13 @@
 
             </div>
 
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> cadence = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cadence'</span>)
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> abend = <span class="hljs-built_in">require</span>(<span class="hljs-string">'abend'</span>)
+<span class="hljs-keyword">var</span> cadence = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cadence'</span>)
+<span class="hljs-keyword">var</span> coalesce = <span class="hljs-built_in">require</span>(<span class="hljs-string">'nascent.coalesce'</span>)
 <span class="hljs-keyword">var</span> getPipe = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./pipe'</span>)(<span class="hljs-built_in">require</span>(<span class="hljs-string">'net'</span>))
-<span class="hljs-keyword">var</span> Multiplexer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit/multiplexer'</span>)
-<span class="hljs-keyword">var</span> Spigot = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit/spigot'</span>)
-<span class="hljs-keyword">var</span> Basin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit/basin'</span>)
-<span class="hljs-keyword">var</span> Responder = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit/responder'</span>)
-<span class="hljs-keyword">var</span> Prefixer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit/prefixer'</span>)
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Colleague</span> (<span class="hljs-params">process</span>) </span>{
-    <span class="hljs-keyword">var</span> pipe = getPipe(process, <span class="hljs-string">'COLLEAGUE_CHILD_FD'</span>)
-    <span class="hljs-keyword">this</span>._multiplexer = <span class="hljs-keyword">new</span> Multiplexer(<span class="hljs-literal">null</span>, pipe.input, pipe.output)
-    <span class="hljs-keyword">this</span>._outOfBandNumber = <span class="hljs-number">0</span>
-</pre></div></div>
+<span class="hljs-keyword">var</span> Conduit = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit'</span>)
+<span class="hljs-keyword">var</span> Procession = <span class="hljs-built_in">require</span>(<span class="hljs-string">'procession'</span>)
+<span class="hljs-keyword">var</span> Destructor = <span class="hljs-built_in">require</span>(<span class="hljs-string">'destructible'</span>)</pre></div></div>
 
         </li>
 
@@ -76,205 +70,32 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>TODO Should be underbarred, right? Rename to Requester.</p>
+              <p>TODO Rethink? Can’t this be a bit more direct?</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>._spigot = <span class="hljs-keyword">new</span> Spigot.Generator
-    <span class="hljs-keyword">this</span>.spigot = <span class="hljs-keyword">new</span> Spigot.Generator
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Colleague</span> (<span class="hljs-params">conference</span>) </span>{
+    <span class="hljs-keyword">this</span>._destructor = <span class="hljs-keyword">new</span> Destructor
+    <span class="hljs-keyword">this</span>._conference = conference
+    <span class="hljs-keyword">this</span>.demolition = <span class="hljs-keyword">this</span>._destructor.events
 }
 
-Colleague.prototype.connect = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async</span>) </span>{
-    <span class="hljs-keyword">async</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>._multiplexer.connect(<span class="hljs-keyword">async</span>())
-    }, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">socket</span>) </span>{
-        <span class="hljs-keyword">this</span>._socket = socke
-        <span class="hljs-keyword">this</span>._spigot.emptyInto(socket.basin)
-        socket.spigot.emptyInto(<span class="hljs-keyword">new</span> Basin.Responder(<span class="hljs-keyword">new</span> Responder(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">new</span> Prefixer)))
+Colleague.prototype.connect = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, process</span>) </span>{
+    <span class="hljs-keyword">var</span> pipe = getPipe(process, coalesce(process.env[<span class="hljs-string">'COMPASSION_COLLEAGUE_FD'</span>], <span class="hljs-string">'stdin/stdout'</span>))
+    <span class="hljs-keyword">var</span> conduit = <span class="hljs-keyword">new</span> Conduit(pipe.input, pipe.output)
+    conduit.read.pump(<span class="hljs-keyword">this</span>._conference.write)
+    <span class="hljs-keyword">this</span>._conference.read.pump(conduit.write)
+    <span class="hljs-keyword">this</span>._destructor.async(<span class="hljs-keyword">async</span>, <span class="hljs-string">'conduit'</span>)(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>._destructor.addDestructor(<span class="hljs-string">'conduit'</span>, conduit.destroy.bind(conduit))
+        conduit.listen(<span class="hljs-keyword">async</span>())
     })
 })
 
-</pre></div></div>
-
-        </li>
-
-
-        <li id="section-3">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Responder interface for events sent by the consensus algorithm and other
-colleagues.</p>
-
-            </div>
-
-        </li>
-
-
-        <li id="section-4">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Consume an atomic log entry.</p>
-
-            </div>
-
-        </li>
-
-
-        <li id="section-5">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>Colleague.prototype._entry = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, envelope</span>) </span>{
-    <span class="hljs-keyword">this</span>.spigot.request({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'entry'</span>,
-        <span class="hljs-attr">body</span>: envelope
-    }, <span class="hljs-keyword">async</span>())
-})
-
-</pre></div></div>
-
-        </li>
-
-
-        <li id="section-6">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>Colleague.prototype._outOfBand = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, envelope</span>) </span>{
-    <span class="hljs-keyword">this</span>.spigot.request({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'outOfBand'</span>,
-        <span class="hljs-attr">body</span>: envelope
-    }, <span class="hljs-keyword">async</span>())
-})
-
-</pre></div></div>
-
-        </li>
-
-
-        <li id="section-7">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>Colleague.prototype._replay = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, envelope</span>) </span>{
-    <span class="hljs-keyword">this</span>.spigot.request({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'replay'</span>,
-        <span class="hljs-attr">body</span>: envelope
-    }, <span class="hljs-keyword">async</span>())
-})
-
-Colleague.prototype.naturalized = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">callback</span>) </span>{
-    <span class="hljs-keyword">this</span>._spigot.send({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'naturalize'</span>,
-        <span class="hljs-attr">body</span>: <span class="hljs-literal">null</span>
-    }, callback)
+Colleague.prototype.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">callback</span>) </span>{
+    <span class="hljs-keyword">this</span>._destructor.destroy()
 }
 
-Colleague.prototype.record = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, record, callback</span>) </span>{
-    <span class="hljs-keyword">this</span>._spigot.send({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'record'</span>,
-        <span class="hljs-attr">body</span>: record
-    }, callback)
-    <span class="hljs-keyword">this</span>._spigot.request({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'replay'</span>,
-        <span class="hljs-attr">body</span>: record
-    }, <span class="hljs-keyword">async</span>())
-})
-
-</pre></div></div>
-
-        </li>
-
-
-        <li id="section-8">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Any error is going to crash. No retry. We are going to ask the curren
-leader. If the leader is not there or responds with any sort of error code,
-we crash. Out-of-band data is supposed to be used to abtain a mirror of an
-initial state, probably through an atomic immigration entry processor, so if
-the leader is unresponsive, and the government has changed, we’re not going
-to be able to wait until things get better. We can’t process the log until
-we’re initialized. Deadlock. Crash and start over.</p>
-<p>The leader doesn’t necessarily need to be the leader. That is application
-dependant. It only needs to have the state information necessary to
-initialize the new participant. Unless the application developer wants us to
-crash, we’re not going to crash if leadership changes, only if the leader a
-the time of immigration has gone away or is unable to respond.</p>
-
-            </div>
-
-        </li>
-
-
-        <li id="section-9">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>Colleague.prototype.outOfBand = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, name, post</span>) </span>{
-    <span class="hljs-keyword">var</span> outOfBandNumber = <span class="hljs-keyword">this</span>._outOfBandNumber++
-    <span class="hljs-keyword">async</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>._socket.request({ <span class="hljs-attr">cookie</span>: <span class="hljs-string">'outOfBand'</span>, <span class="hljs-attr">to</span>: name, <span class="hljs-attr">body</span>: post }, <span class="hljs-keyword">async</span>())
-    }, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) </span>{
-        <span class="hljs-keyword">this</span>._socket.enqueue({
-            <span class="hljs-attr">cookie</span>: <span class="hljs-string">'outOfBandReturn'</span>,
-            <span class="hljs-attr">to</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-attr">body</span>: { <span class="hljs-attr">invocation</span>: outOfBandReturn, <span class="hljs-attr">response</span>: response }
-        })
-        <span class="hljs-keyword">return</span> [ response ]
-    })
-})
-
-Colleague.prototype.publish = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">envelope, callback</span>) </span>{
-    <span class="hljs-keyword">this</span>._spigot.send({
-        <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>,
-        <span class="hljs-attr">method</span>: <span class="hljs-string">'publish'</span>,
-        <span class="hljs-attr">body</span>: envelope
-    }, callback)
-}
-
-Colleague.prototype.close = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async</span>) </span>{
-    <span class="hljs-keyword">this</span>._spigot.send(<span class="hljs-literal">null</span>, <span class="hljs-keyword">async</span>())
-})
-
-<span class="hljs-built_in">module</span>.exports = Colleague
-
-</pre></div></div>
+<span class="hljs-built_in">module</span>.exports = Colleague</pre></div></div>
 
         </li>
 
