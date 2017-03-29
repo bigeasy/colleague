@@ -33,8 +33,7 @@
     },
     "devDependencies":
     {
-                            "proof":                        "1.2.x",
-                            "vestibule":                    "1.6.0"
+                            "proof":                        "1.2.x"
     },
     "main":                 "colleague",
     "scripts":
