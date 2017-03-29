@@ -1,6 +1,6 @@
 var abend = require('abend')
 var cadence = require('cadence')
-var coalesce = require('nascent.coalesce')
+var coalesce = require('extant')
 var getPipe = require('./pipe')(require('net'))
 var Conduit = require('conduit')
 var Procession = require('procession')
