@@ -1,4 +1,4 @@
-var coalesce = require('nascent.coalesce')
+var coalesce = require('extant')
 var noop = require('nop')
 
 module.exports = function (net) {
