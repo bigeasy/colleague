@@ -6,14 +6,13 @@ var Conduit = require('conduit')
 var Procession = require('procession')
 var Destructor = require('destructible')
 
-// TODO Rethink? Can't this be a bit more direct?
 function Colleague (conference) {
     this._destructor = new Destructor
     this._conference = conference
     this.demolition = this._destructor.events
 }
 
-Colleague.prototype.connect = cadence(function (async, process) {
+Colleague.prototype.listen = cadence(function (async, process) {
     var pipe = getPipe(process, coalesce(process.env['COMPASSION_COLLEAGUE_FD'], 'stdin/stdout'))
     var conduit = new Conduit(pipe.input, pipe.output)
     conduit.read.pump(this._conference.write)
