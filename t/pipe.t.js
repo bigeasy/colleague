@@ -4,7 +4,7 @@ function prove (assert) {
     var stream = require('stream')
     var net = {
         Socket: function (options) {
-            assert(options, { fd: 3 }, 'socket')
+            assert(options, { fd: '3' }, 'socket')
             this.destroy = function () {
                 assert(true, 'pipe destroyed')
             }
