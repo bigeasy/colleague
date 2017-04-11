@@ -4,12 +4,12 @@ var coalesce = require('extant')
 var getPipe = require('./pipe')(require('net'))
 var Conduit = require('conduit')
 var Procession = require('procession')
-var Destructor = require('destructible')
+var Destructible = require('destructible')
 
 function Colleague (conference) {
-    this._destructor = new Destructor
+    this._destructible = new Destructible
     this._conference = conference
-    this.demolition = this._destructor.events
+    this.demolition = this._destructible.events
 }
 
 Colleague.prototype.listen = cadence(function (async, process) {
@@ -17,14 +17,15 @@ Colleague.prototype.listen = cadence(function (async, process) {
     var conduit = new Conduit(pipe.input, pipe.output)
     conduit.read.pump(this._conference.write)
     this._conference.read.pump(conduit.write)
-    this._destructor.async(async, 'conduit')(function () {
-        this._destructor.addDestructor('conduit', conduit.destroy.bind(conduit))
+    this._destructible.async(async, 'conduit')(function (ready) {
+        this._destructible.addDestructor('conduit', conduit.destroy.bind(conduit))
         conduit.listen(async())
+        ready.unlatch()
     })
 })
 
 Colleague.prototype.destroy = function (callback) {
-    this._destructor.destroy()
+    this._destructible.destroy()
 }
 
 module.exports = Colleague
