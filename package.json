@@ -24,12 +24,13 @@
     {
                             "abend":                        "1.0.x",
                             "cadence":                      "1.0.x",
-                            "conduit":                      "0.4.x",
+                            "conduit":                      "0.7.x",
                             "delta":                        "1.2.x",
-                            "destructible":                 "0.4.x",
+                            "destructible":                 "0.6.x",
                             "extant":                       "1.0.1",
                             "nop":                          "1.0.0",
-                            "procession":                   "0.4.x"
+                            "procession":                   "0.4.x",
+                            "signal":                       "1.10.x"
     },
     "devDependencies":
     {
