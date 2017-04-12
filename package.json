@@ -29,7 +29,7 @@
                             "destructible":                 "0.4.x",
                             "extant":                       "1.0.1",
                             "nop":                          "1.0.0",
-                            "procession":                   "0.2.x"
+                            "procession":                   "0.4.x"
     },
     "devDependencies":
     {
