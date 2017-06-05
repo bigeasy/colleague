@@ -8,7 +8,7 @@ var Destructible = require('destructible')
 var Signal = require('signal')
 
 function Colleague (conference) {
-    this._destructible = new Destructible
+    this._destructible = new Destructible('colleague')
     this._conference = conference
     this.demolition = this._destructible.events
     this.ready = new Signal
@@ -18,13 +18,10 @@ Colleague.prototype.listen = cadence(function (async, process) {
     var pipe = getPipe(process, coalesce(process.env['COMPASSION_COLLEAGUE_FD'], 'stdin/stdout'))
     var conduit = new Conduit(pipe.input, pipe.output)
     conduit.read.pump(this._conference.write, 'enqueue')
+    conduit.ready.wait(this.ready, 'unlatch')
     this._conference.read.pump(conduit.write, 'enqueue')
-    this._destructible.stack(async, 'conduit')(function (ready) {
-        this._destructible.addDestructor('conduit', conduit.destroy.bind(conduit))
-        conduit.listen(async())
-        ready.unlatch()
-    })
-    this._destructible.ready.wait(this.ready, 'unlatch')
+    this._destructible.addDestructor('conduit', conduit.destroy.bind(conduit))
+    conduit.listen(this._destructible.monitor('conduit'))
 })
 
 Colleague.prototype.destroy = function (callback) {
