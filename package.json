@@ -24,7 +24,7 @@
     {
                             "abend":                        "1.0.x",
                             "cadence":                      "1.0.x",
-                            "conduit":                      "0.7.x",
+                            "conduit":                      "0.8.x",
                             "delta":                        "1.2.x",
                             "destructible":                 "0.12.x",
                             "extant":                       "1.0.1",
