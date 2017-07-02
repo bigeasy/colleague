@@ -29,7 +29,6 @@
                             "destructible":                 "0.13.x",
                             "extant":                       "1.0.1",
                             "nop":                          "1.0.0",
-                            "procession":                   "0.4.x",
                             "signal":                       "1.10.x"
     },
     "devDependencies":
