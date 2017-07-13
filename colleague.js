@@ -15,15 +15,13 @@ function Colleague (conference) {
 
 Colleague.prototype.listen = cadence(function (async, process) {
     var pipe = getPipe(process, coalesce(process.env['COMPASSION_COLLEAGUE_FD'], 'stdin/stdout'))
-    var conduit = new Conduit(pipe.input, pipe.output)
+    var conduit = new Conduit(pipe.input, pipe.output, this._conference)
     async(function () {
-        conduit.read.pump(this._conference.write, 'enqueue')
-        this._conference.read.pump(conduit.write, 'enqueue')
         this._destructible.addDestructor('conduit', conduit.destroy.bind(conduit))
-        conduit.listen(this._destructible.monitor('conduit'))
         conduit.ready.wait(async())
+        conduit.listen(null, this._destructible.monitor('conduit'))
     }, function () {
-        conduit.write.push({ module: 'colleague', method: 'pipe' })
+        this._conference.write.push({ module: 'colleague', method: 'pipe' })
         this.ready.unlatch()
     })
 })
