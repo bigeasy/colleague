@@ -1,6 +1,6 @@
 {
     "name":                 "colleague",
-    "version":              "0.8.0",
+    "version":              "0.8.1",
     "description":
 
       "Colleague object used by the Compasssion atomic log framework.",
