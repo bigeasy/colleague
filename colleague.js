@@ -23,6 +23,7 @@ Colleague.prototype.listen = cadence(function (async, process) {
     }, function () {
         this._conference.write.push({ module: 'colleague', method: 'pipe' })
         this.ready.unlatch()
+        this._destructible.completed(async())
     })
 })
 
