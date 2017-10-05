@@ -7,9 +7,8 @@ var Destructible = require('destructible')
 var Signal = require('signal')
 
 function Colleague (conference) {
-    this._destructible = new Destructible('colleague')
+    this._destructible = new Destructible(1000, 'colleague')
     this._conference = conference
-    this.demolition = this._destructible.events
     this.ready = new Signal
 }
 
@@ -23,7 +22,7 @@ Colleague.prototype.listen = cadence(function (async, process) {
     }, function () {
         this._conference.write.push({ module: 'colleague', method: 'pipe' })
         this.ready.unlatch()
-        this._destructible.completed(async())
+        this._destructible.completed.wait(async())
     })
 })
 
