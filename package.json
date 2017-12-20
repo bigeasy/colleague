@@ -27,7 +27,7 @@
                             "conduit":                      "0.16.x",
                             "delta":                        "1.2.x",
                             "destructible":                 "0.17.x",
-                            "extant":                       "1.0.1",
+                            "extant":                       "1.0.x",
                             "nop":                          "1.0.0",
                             "signal":                       "3.2.x"
     },
