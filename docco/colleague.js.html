@@ -55,47 +55,39 @@
 
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> abend = <span class="hljs-built_in">require</span>(<span class="hljs-string">'abend'</span>)
 <span class="hljs-keyword">var</span> cadence = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cadence'</span>)
-<span class="hljs-keyword">var</span> coalesce = <span class="hljs-built_in">require</span>(<span class="hljs-string">'nascent.coalesce'</span>)
+<span class="hljs-keyword">var</span> coalesce = <span class="hljs-built_in">require</span>(<span class="hljs-string">'extant'</span>)
 <span class="hljs-keyword">var</span> getPipe = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./pipe'</span>)(<span class="hljs-built_in">require</span>(<span class="hljs-string">'net'</span>))
 <span class="hljs-keyword">var</span> Conduit = <span class="hljs-built_in">require</span>(<span class="hljs-string">'conduit'</span>)
-<span class="hljs-keyword">var</span> Procession = <span class="hljs-built_in">require</span>(<span class="hljs-string">'procession'</span>)
-<span class="hljs-keyword">var</span> Destructor = <span class="hljs-built_in">require</span>(<span class="hljs-string">'destructible'</span>)</pre></div></div>
+<span class="hljs-keyword">var</span> Destructible = <span class="hljs-built_in">require</span>(<span class="hljs-string">'destructible'</span>)
+<span class="hljs-keyword">var</span> Signal = <span class="hljs-built_in">require</span>(<span class="hljs-string">'signal'</span>)
 
-        </li>
-
-
-        <li id="section-2">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>TODO Rethink? Can’t this be a bit more direct?</p>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Colleague</span> (<span class="hljs-params">conference</span>) </span>{
-    <span class="hljs-keyword">this</span>._destructor = <span class="hljs-keyword">new</span> Destructor
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Colleague</span> (<span class="hljs-params">conference</span>) </span>{
+    <span class="hljs-keyword">this</span>._destructible = <span class="hljs-keyword">new</span> Destructible(<span class="hljs-number">1000</span>, <span class="hljs-string">'colleague'</span>)
     <span class="hljs-keyword">this</span>._conference = conference
-    <span class="hljs-keyword">this</span>.demolition = <span class="hljs-keyword">this</span>._destructor.events
+    <span class="hljs-keyword">this</span>.ready = <span class="hljs-keyword">new</span> Signal
 }
 
-Colleague.prototype.connect = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, process</span>) </span>{
+Colleague.prototype.listen = cadence(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">async, process</span>) </span>{
     <span class="hljs-keyword">var</span> pipe = getPipe(process, coalesce(process.env[<span class="hljs-string">'COMPASSION_COLLEAGUE_FD'</span>], <span class="hljs-string">'stdin/stdout'</span>))
-    <span class="hljs-keyword">var</span> conduit = <span class="hljs-keyword">new</span> Conduit(pipe.input, pipe.output)
-    conduit.read.pump(<span class="hljs-keyword">this</span>._conference.write)
-    <span class="hljs-keyword">this</span>._conference.read.pump(conduit.write)
-    <span class="hljs-keyword">this</span>._destructor.async(<span class="hljs-keyword">async</span>, <span class="hljs-string">'conduit'</span>)(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>._destructor.addDestructor(<span class="hljs-string">'conduit'</span>, conduit.destroy.bind(conduit))
-        conduit.listen(<span class="hljs-keyword">async</span>())
+    <span class="hljs-keyword">var</span> conduit = <span class="hljs-keyword">new</span> Conduit(pipe.input, pipe.output, <span class="hljs-keyword">this</span>._conference)
+    <span class="hljs-keyword">async</span>(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>._destructible.addDestructor(<span class="hljs-string">'conduit'</span>, conduit.destroy.bind(conduit))
+        conduit.ready.wait(<span class="hljs-keyword">async</span>())
+        conduit.listen(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>._destructible.monitor(<span class="hljs-string">'conduit'</span>))
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>._conference.write.push({ <span class="hljs-attr">module</span>: <span class="hljs-string">'colleague'</span>, <span class="hljs-attr">method</span>: <span class="hljs-string">'pipe'</span> })
+        <span class="hljs-keyword">this</span>.ready.unlatch()
+        <span class="hljs-keyword">this</span>._destructible.completed.wait(<span class="hljs-keyword">async</span>())
     })
 })
 
 Colleague.prototype.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">callback</span>) </span>{
-    <span class="hljs-keyword">this</span>._destructor.destroy()
+    <span class="hljs-keyword">this</span>._destructible.destroy()
 }
 
-<span class="hljs-built_in">module</span>.exports = Colleague</pre></div></div>
+<span class="hljs-built_in">module</span>.exports = Colleague
+
+</pre></div></div>
 
         </li>
 
