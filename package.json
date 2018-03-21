@@ -24,16 +24,16 @@
     {
                             "abend":                        "1.0.x",
                             "cadence":                      "1.0.x",
-                            "conduit":                      "0.16.x",
+                            "conduit":                      "2.6.x",
                             "delta":                        "1.2.x",
-                            "destructible":                 "0.17.x",
+                            "destructible":                 "0.27.x",
                             "extant":                       "1.0.x",
                             "nop":                          "1.0.0",
-                            "signal":                       "3.2.x"
+                            "signal":                       "3.4.x"
     },
     "devDependencies":
     {
-                            "procession":                   "0.9.x",
+                            "procession":                   "0.16.x",
                             "proof":                        "3.0.x"
     },
     "main":                 "colleague",

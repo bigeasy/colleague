@@ -1,23 +1,26 @@
 require('proof')(1, require('cadence')(prove))
 
-function prove (async, assert) {
-    var cadence = require('cadence')
+function prove (async, okay) {
     var Colleague = require('..')
+
     var stream = require('stream')
+
     var input = new stream.PassThrough
     var output = new stream.PassThrough
-    var abend = require('abend')
+
     var Procession = require('procession')
-    var colleague = new Colleague({ read: new Procession, write: new Procession })
+
+    var Destructible = require('destructible')
+    var destructible = new Destructible('t/colleague.t.js')
 
     async(function () {
-        colleague.listen({
+        var conference = { read: new Procession, write: new Procession }
+        destructible.monitor('colleague', Colleague, {
             env: { 'COMPASSION_COLLEAGUE_FD': 'input/output' },
             input: input,
             output: output
-        }, async())
-        colleague.destroy()
+        }, conference, async())
     }, function () {
-        assert(true, 'done')
+        okay(true, 'done')
     })
 }
